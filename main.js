@@ -2,29 +2,29 @@ const gcdTextField = document.getElementById('gcdTextField')
 const gcdTable = document.getElementById('gcdTable')
 const gcdDesc = document.getElementById('gcdDesc')
 
-gcdTextField.addEventListener('keyup', e => {
+document.addEventListener('DOMContentLoaded', e => { gcd() })
+gcdTextField.addEventListener('keyup', e => { gcd() })
+
+function gcd() {
   const gcdString = gcdTextField.value;
   if(!gcdString) {
     clearGCDContent(gcdTable, gcdDesc)
     return;
   }
 
-  const test = gcdString.match(/^\d+(,\d+)*$/) //comma seperated digit
   clearGCDContent(gcdTable, gcdDesc)
-  if(!!test) {
-    const gcdArr = gcdString.split(',').map((elem)=>parseInt(elem))
-    if(gcdArr.length == 2) {
-      if(gcdArr[0]>gcdArr[1]) {
-        [gcdArr[0], gcdArr[1]] = [gcdArr[1],gcdArr[0]]
-      }
-      calculateGCD(gcdArr[0], gcdArr[1])
-    }else{
-      console.warn('Enter only two comma seperated number')
+  const gcdArr = gcdString.split(',').map(Number)
+  if(gcdArr.some(isNaN) || gcdArr.length != 2) {
+    gcdDesc.innerHTML = 'Enter only two comma seperated number'
+  } else if(!gcdArr.every((num) => num > 0)) {
+    gcdDesc.innerHTML = 'Number should be greater than 0' 
+  } else {
+    if(gcdArr[0]>gcdArr[1]) {
+      [gcdArr[0], gcdArr[1]] = [gcdArr[1],gcdArr[0]]
     }
-  }else{
-    console.warn('Validation failed')
+    calculateGCD(gcdArr[0], gcdArr[1])
   }
-})
+}
 
 const insertBlankCells = (n, row) => {
   for(let i = 0; i < n; i++) {
@@ -61,7 +61,6 @@ const calculateGCD = (divisor, divident) => {
     remCell.classList.add("remainder")
   
     if(remainder == 0) {
-      console.log('GCD is '+divisor)
       gcdDesc.innerHTML = `GCD of (${gcdTextField.value}) = ${divisor}`
       break;
     }
